@@ -11,14 +11,15 @@ class Sht30H : public Sensor
 {
 private:
     SHT3X sht31;
-public:
     float interval;
+public:
     Sht30H(uint8_t size, float scale, float interval):Sensor(size,scale)
     {
         SHT3X sht31();
         this->interval = interval;
     }
     void sample();
+    float getInterval();
 };
 
 #endif

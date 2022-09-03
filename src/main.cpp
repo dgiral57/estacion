@@ -8,7 +8,8 @@ void setup() {
 Serial.begin(115200);
 }
 void loop() {
-  if ((millis() - timer) > SensorH.interval){
+  if ((millis() - timer) > SensorH.getInterval()){
+    //Serial.println("Sensando");
     SensorH.sample();
     timer = millis();
   }
@@ -16,6 +17,6 @@ void loop() {
   if (Serial.available()){
     Serial.print("La humedad es: ");
     Serial.println(SensorH.getValue());
+    Serial.read();
   }
-
 }
