@@ -1,22 +1,23 @@
 #include <Arduino.h>
 #include <sht30h.h>
 
-long timer = millis();
-Sht30H SensorH(10,1,1000);
+long samplingTimer = millis();
+long sendingTimer = millis();
+u_int16_t samplingTime = 1000;
+uint32_t sendingTime = 300000;
+Sht30H SensorH(10,1);
 
 void setup() {
 Serial.begin(115200);
 }
 void loop() {
-  if ((millis() - timer) > SensorH.getInterval()){
-    //Serial.println("Sensando");
+  if ((millis() - samplingTimer) > samplingTime){
     SensorH.sample();
-    timer = millis();
+    samplingTimer = millis();
   }
 
-  if (Serial.available()){
-    Serial.print("La humedad es: ");
+  if ((millis() - sendingTimer > sendingTime) || SensorH.derivate()){
     Serial.println(SensorH.getValue());
-    Serial.read();
+    sendingTimer = millis();
   }
 }
