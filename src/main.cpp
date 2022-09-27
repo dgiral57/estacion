@@ -11,8 +11,8 @@
 long samplingTimer = millis();
 long sendingTimer = millis();
 u_int16_t samplingTime = 1000;
-uint32_t sendingTime = 300000;
-Sht30H SensorH(10,1);
+uint32_t sendingTime = 20000;
+Sht30H SensorH(10,1,2);
 WIFI Wifi(ssid,psw);
 
 void setup() {
@@ -25,7 +25,8 @@ void loop() {
     samplingTimer = millis();
   }
 
-  if ((millis() - sendingTimer > sendingTime) || SensorH.derivate()){
+  if ((millis() - sendingTimer > sendingTime) || SensorH.state()){
+    Serial.println(SensorH.state());
     Serial.println(SensorH.getValue());
     sendingTimer = millis();
   }

@@ -10,12 +10,11 @@ class Sht30H : public Sensor
 {
 private:
     SHT3X sht31;
+    float read();
 public:
-    Sht30H(uint8_t size, float scale):Sensor(size,scale)
-    {
-        SHT3X sht31();
-    }
-    void sample();
+    Sht30H(uint8_t size, float scale, float threshold):Sensor(size,scale,threshold)    {
+        this->sht31 = SHT3X();
+    };
 };
 
 #endif

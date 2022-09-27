@@ -1,7 +1,6 @@
 #include <sht30h.h>
 
-void Sht30H::sample(){
+float Sht30H::read(){
     sht31.get();
-    this->buffer.add(sht31.humidity);
-    this->isReady = true;
+    return sht31.humidity;
 }
