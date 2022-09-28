@@ -13,5 +13,5 @@ void WIFI::cnct(){
         delay(500);
     }
     Serial.println();
-    Serial.print("Connected");
+    Serial.println("Connected");
 }

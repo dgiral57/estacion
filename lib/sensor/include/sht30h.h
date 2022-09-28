@@ -12,7 +12,7 @@ private:
     SHT3X sht31;
     float read();
 public:
-    Sht30H(uint8_t size, float scale, float threshold):Sensor(size,scale,threshold)    {
+    Sht30H(uint8_t size, float scale, float threshold):Sensor(size,scale,threshold){
         this->sht31 = SHT3X();
     };
 };

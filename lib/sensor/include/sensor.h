@@ -19,15 +19,14 @@ protected:
     uint8_t pin;
     CircularBuffer buffer;
     bool chenged(float value);
-    virtual float read(){ 
-        return 0; 
-        };
+    virtual float read() = 0;
 public:
     Sensor(){};
     Sensor(uint8_t size, float scale, float threshold);
     void sample();
     float getValue();
     bool state();
+    void reset_has_change();
 };
 
 #endif
