@@ -11,16 +11,17 @@
 
 long samplingTimer = millis();
 long sendingTimer = millis();
-u_int16_t samplingTime = 1000;
-uint32_t sendingTime = 300000;
-Sht30H SensorH(10,1);
+u_int16_t samplingTime = 5000;
+uint32_t sendingTime = 200000;
+Sht30H SensorH(10,1,1);
 WIFI Wifi(ssid,psw);
 HTTPClient http;
 WiFiClient Client;
 
 void setup() {
 Serial.begin(115200);
-Wifi.cnct();
+Serial.println();
+//Wifi.cnct();
 }
 void loop() {
   if ((millis() - samplingTimer) > samplingTime){
@@ -28,9 +29,13 @@ void loop() {
     samplingTimer = millis();
   }
 
-  if ((millis() - sendingTimer > sendingTime) || SensorH.derivate()) {
-    http.begin(Client,"http://0.0.0.0:8080/Values");
-    http.addHeader("Content-Type", "application/json");
-    int httpCode = http.POST("{\"api_key\":\"tPmAT5Ab3j7F9\",\"sensor\":\"BME280\",\"value1\":\"24.25\",\"value2\":\"49.54\",\"value3\":\"1005.14\"}");
+  if ((millis() - sendingTimer > sendingTime) || SensorH.state()){
+    Serial.print("state: ");
+    Serial.println(SensorH.state());
+    Serial.print("Sensor value: ");
+    Serial.println(SensorH.getValue());
+    Serial.println();
+    SensorH.reset_has_change();
+    sendingTimer = millis();
   }
 }
