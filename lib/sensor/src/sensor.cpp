@@ -37,11 +37,11 @@ bool Sensor::chenged(float value){
     float diff = ((value * this->scale)-last_value)/time;
     Serial.print("diff: ");
     Serial.println(diff);
-    this->sum += abs(diff);
+    this->sum += diff;
     Serial.print("sum: ");
     Serial.println(this->sum);
     Serial.println();
-    if (this->sum >= this->threshold){
+    if (abs(this->sum) >= this->threshold){
         this->sum = 0;
         return true;
     }
