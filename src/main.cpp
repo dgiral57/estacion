@@ -5,9 +5,12 @@
 #include <WiFiClient.h>
 #include <sht30h.h>
 #include <ArduinoJson.h>
+#include <WiFiUdp.h>
+#include <NTPClient.h>
 
 #define ssid  "TIGO0B9491" // Declare your ID for WiFi connection
 #define psw  "29VY4BAJ" // Declare your password for WiFi connection
+#define url "http://192.168.1.190:8080/Values"
 
 
 long samplingTimer = millis();
@@ -18,13 +21,17 @@ Sht30H sensorH(10,1,1);
 WIFI Wifi(ssid,psw);
 HTTPClient http;
 WiFiClient client;
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
 String json;
 
 
 void setup() {
 Serial.begin(115200);
 Serial.println();
-//Wifi.cnct();
+Wifi.cnct();
+timeClient.begin();
+
 }
 void loop() {
   if ((millis() - samplingTimer) > samplingTime){
@@ -36,9 +43,9 @@ void loop() {
     // Prepare JSON document
     DynamicJsonDocument doc(2048);
     //doc["Temperature"] = sensorT.getValue();
-    doc["Humidity"] = sensorH.getValue();
+    doc["humidity"] = sensorH.getValue();
     //doc["Pressure"] = sensorP.getValue()
-    http.begin(client,"http://0.0.0.0:8080/Values");
+    http.begin(client,url);
     http.addHeader("Content-Type", "application/json");
     serializeJson(doc,json);
     int httpCode = http.POST(json);
