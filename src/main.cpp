@@ -10,8 +10,8 @@
 #include <sht30t.h>
 #include <bmp180p.h>
 
-#define ssid  "TIGO0B9491" // Declare your ID for WiFi connection
-#define psw  "29VY4BAJ" // Declare your password for WiFi connection
+#define ssid  "motorola edge 20 lite_6907" // Declare your ID for WiFi connection
+#define psw  "123456789" // Declare your password for WiFi connection
 #define url "http://192.168.1.190:8080/Values"
 
 
@@ -20,8 +20,8 @@ long sendingTimer = millis();
 u_int16_t samplingTime = 5000;
 uint32_t sendingTime = 200000;
 Sht30H sensorH(10,1,1);
-Sht30T SensorT(10,1,1);
-Bmp180P SensorP(10,1,1);
+Sht30T sensorT(10,1,1);
+Bmp180P sensorP(10,1,1);
 WIFI Wifi(ssid,psw);
 HTTPClient http;
 WiFiClient client;
@@ -40,16 +40,16 @@ timeClient.begin();
 void loop() {
   if ((millis() - samplingTimer) > samplingTime){
     sensorH.sample();
-    SensorT.sample();
-    SensorP.sample();
+    sensorT.sample();
+    sensorP.sample();
     samplingTimer = millis();
   }
 
-  if ((millis() - sendingTimer > sendingTime) || SensorH.state() || SensorT.state() || SensorP.state()){
+  if ((millis() - sendingTimer > sendingTime) || sensorH.state() || sensorT.state() || sensorP.state()){
     DynamicJsonDocument doc(2048);
     doc["humidity"] = sensorH.getValue();
-    //doc["Temperature"] = sensorT.getValue();
-    //doc["Pressure"] = sensorP.getValue()
+    doc["Temperature"] = sensorT.getValue();
+    doc["Pressure"] = sensorP.getValue();
     http.begin(client,url);
     http.addHeader("Content-Type", "application/json");
     serializeJson(doc,json);
