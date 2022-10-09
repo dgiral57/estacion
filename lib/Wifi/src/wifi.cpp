@@ -17,4 +17,6 @@ void WIFI::cnct(){
     Serial.println("Connected");
     Serial.print("IP: ");
     Serial.println(WiFi.localIP());
+    Serial.print("Subnet Mask: ");
+    Serial.println(WiFi.subnetMask());
 }
