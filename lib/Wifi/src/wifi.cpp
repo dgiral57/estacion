@@ -6,6 +6,7 @@ WIFI::WIFI(String ssid, String psw) {
 }
 
 void WIFI::cnct(){
+    WiFi.mode(WIFI_STA);
     WiFi.begin(this->ssid,this->psw);
     Serial.print("Connecting");
     while (WiFi.status() != WL_CONNECTED){
@@ -14,4 +15,6 @@ void WIFI::cnct(){
     }
     Serial.println();
     Serial.println("Connected");
+    Serial.print("IP: ");
+    Serial.println(WiFi.localIP());
 }

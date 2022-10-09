@@ -10,11 +10,11 @@
 #include <sht30t.h>
 #include <bmp180p.h>
 
-#define ssid  "motorola edge 20 lite_6907" // Declare your ID for WiFi connection
-#define psw  "123456789" // Declare your password for WiFi connection
-#define url "http://192.168.1.190:8080/Values"
+#define ssid  "TIGO0B9491" // Declare your ID for WiFi connection
+#define psw  "29VY4BAJ" // Declare your password for WiFi connection
 
-
+int httpcode;
+int httpCode;
 long samplingTimer = millis();
 long sendingTimer = millis();
 u_int16_t samplingTime = 5000;
@@ -25,16 +25,17 @@ Bmp180P sensorP(10,1,1);
 WIFI Wifi(ssid,psw);
 HTTPClient http;
 WiFiClient client;
-WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP);
 String json;
-
+//String url = "http://192.168.1.190:8080/values";
+String url = "https://jsonplaceholder.typicode.com/users";
 
 void setup() {
 Serial.begin(115200);
 Serial.println();
 Wifi.cnct();
-timeClient.begin();
+Serial.println(WiFi.subnetMask());
+Serial.println("Conectando al servidor");
+
 
 }
 void loop() {
@@ -46,16 +47,25 @@ void loop() {
   }
 
   if ((millis() - sendingTimer > sendingTime) || sensorH.state() || sensorT.state() || sensorP.state()){
+    Serial.println("entro a enviar info");
     DynamicJsonDocument doc(2048);
+    doc["temperature"] = sensorT.getValue();
     doc["humidity"] = sensorH.getValue();
-    doc["Temperature"] = sensorT.getValue();
-    doc["Pressure"] = sensorP.getValue();
-    http.begin(client,url);
-    http.addHeader("Content-Type", "application/json");
+    doc["pressure"] = sensorP.getValue();
+    Serial.println("Creo el json");
     serializeJson(doc,json);
-    int httpCode = http.POST(json);
+    Serial.println(json);
+    http.begin(client,url) ;
+    Serial.println("Coneccion creada");
+    http.addHeader("Content-Type", "application/json");
+    httpcode = http.GET();
+    //httpCode = http.POST(json);
+    Serial.print("el codigo http es:");
+    Serial.println(httpcode);
     sensorH.reset_has_change();
+    sensorT.reset_has_change();
+    sensorP.reset_has_change();
     sendingTimer = millis();
-    Serial.println(httpCode);
+    http.end();
   }
 }
