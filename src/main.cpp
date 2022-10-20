@@ -4,38 +4,64 @@
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
 #include <sht30h.h>
+#include <sht30t.h>
+#include <bmp180p.h>
+#include <ArduinoJson.h>
 
-#define ssid  "TIGO0B9491" // Declare your ID for WiFi connection
-#define psw  "29VY4BAJ" // Declare your password for WiFi connection
+#define ssid  "motorola edge 20 lite_6907" // Declare your ID for WiFi connection
+#define psw  "123456789" // Declare your password for WiFi connection
 
-
+int httpcode;
+int httpCode;
 long samplingTimer = millis();
 long sendingTimer = millis();
-u_int16_t samplingTime = 5000;
-uint32_t sendingTime = 200000;
-Sht30H SensorH(10,1,1);
+uint16_t samplingTime = 5000;
+uint32_t sendingTime = 300000;
+Sht30H sensorH(10,1,1);
+Sht30T sensorT(10,1,1);
+Bmp180P sensorP(10,1,1);
 WIFI Wifi(ssid,psw);
 HTTPClient http;
-WiFiClient Client;
+WiFiClient client;
+String json;
+String url = "http://192.168.149.94:8080/values";
 
 void setup() {
-Serial.begin(115200);
-Serial.println();
-//Wifi.cnct();
+  Serial.begin(115200);
+  Serial.println();
+  Wifi.cnct();
 }
+
 void loop() {
   if ((millis() - samplingTimer) > samplingTime){
-    SensorH.sample();
+    sensorH.sample();
+    sensorT.sample();
+    sensorP.sample();
     samplingTimer = millis();
   }
 
-  if ((millis() - sendingTimer > sendingTime) || SensorH.state()){
-    Serial.print("state: ");
-    Serial.println(SensorH.state());
-    Serial.print("Sensor value: ");
-    Serial.println(SensorH.getValue());
-    Serial.println();
-    SensorH.reset_has_change();
+  if ((millis() - sendingTimer > sendingTime) || sensorH.state() || sensorT.state() || sensorP.state()){
+    DynamicJsonDocument doc(2048);
+    doc["temperature"] = sensorT.getValue();
+    doc["humidity"] = sensorH.getValue();
+    doc["pressure"] = sensorP.getValue();
+    serializeJson(doc,json);
+    Serial.println(json);
+    http.begin(client,url) ;
+    http.addHeader("Content-Type", "application/json");
+    httpCode = http.POST(json);
+    if (httpCode > 0){
+    Serial.println(http.getString());
+    }
+    else{
+      Serial.println("Error: Data not sent");
+    }
+    sensorH.reset_has_change();
+    sensorT.reset_has_change();
+    sensorP.reset_has_change();
     sendingTimer = millis();
+    doc.clear();
+    json.clear();
+    http.end();
   }
 }

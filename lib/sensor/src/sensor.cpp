@@ -25,22 +25,22 @@ float Sensor::getValue(){
 }
 
 bool Sensor::chenged(float value){
-    Serial.println("Entro a chenged()");
-    Serial.print("value: ");
-    Serial.println(value);
+    //Serial.println("Entro a chenged()");
+    //Serial.print("value: ");
+    //Serial.println(value);
     float time = (millis() - this->last_time) / 1000;
-    Serial.print("time: ");
-    Serial.println(time);
+    //Serial.print("time: ");
+    //Serial.println(time);
     float last_value = this->getValue();
-    Serial.print("Last value: ");
-    Serial.println(last_value);
+    //Serial.print("Last value: ");
+    //Serial.println(last_value);
     float diff = ((value * this->scale)-last_value)/time;
-    Serial.print("diff: ");
-    Serial.println(diff);
+    //Serial.print("diff: ");
+    //Serial.println(diff);
     this->sum += diff;
-    Serial.print("sum: ");
-    Serial.println(this->sum);
-    Serial.println();
+    //Serial.print("sum: ");
+    //Serial.println(this->sum);
+    //Serial.println();
     if (abs(this->sum) >= this->threshold){
         this->sum = 0;
         return true;
@@ -52,7 +52,7 @@ bool Sensor::chenged(float value){
 
 void Sensor::sample(){
     float value = this->read();
-    Serial.println("Dato captuado");
+    //Serial.println("Dato captuado");
     this->has_change = this->chenged(value);
     this->buffer.add(value);
     this->isReady = true;
